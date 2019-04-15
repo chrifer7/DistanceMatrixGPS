@@ -31,8 +31,27 @@ namespace DistanceMatrixTest.Model
             return wayPoints;
         }
 
+        private List<Location> PopulateSegmentWayPoints(List<MatrixGPSPoints.GPSLatLng> gpsPoints, int fromPoint, int toPoint)
+        {
+            List<Location> wayPoints = new List<Location>();
+
+            if (fromPoint < 0 || toPoint > gpsPoints.Count) return null;
+
+            for (int i = fromPoint; i < toPoint; i++)
+            {
+                wayPoints.Add(new LatLng(gpsPoints[i].Latitude, gpsPoints[i].Longitude));
+            }
+
+            Console.WriteLine("\nGPS Points");
+            gpsPoints.ForEach(item => Console.Write(item.Latitude + "," + item.Longitude + " / "));
+            Console.WriteLine("\nWay Points from: {0} to: {1}", fromPoint, toPoint);
+            wayPoints.ForEach(item => Console.Write(item + " / "));
+
+            return wayPoints;
+        }
+
         /// <summary>
-        /// Calculate distances and times to travel from one origin to many destinations
+        /// Calculate distances and times to travel from many origins to many destinations
         /// </summary>
         public void DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdresses()
         {
@@ -77,6 +96,46 @@ namespace DistanceMatrixTest.Model
             var response = new DistanceMatrixService().GetResponse(request);
 
             PrintResponseMatrix(request, response);
+
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Calculate distances and times to travel from many origins to many destinations using many requests to avoid the limitation of 10 x 10 
+        /// </summary>
+        public void DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdressesSplitted()
+        {
+            int splits = (_matrixGPSPoints.QuantityOfOriginsAndDestinations + 9)/ 10; //Equivalent to Math.Ceiling
+            Console.WriteLine("Number of splits {0}", splits);
+
+            for (int i = 0; i < splits; i++)
+            {
+                
+                int fromOriginPoint = i * 10;
+                int toOriginPoint = fromOriginPoint + 10;//(_matrixGPSPoints.QuantityOfOriginsAndDestinations < fromOriginPoint + 10 ? _matrixGPSPoints.QuantityOfOriginsAndDestinations : fromOriginPoint + 10);
+
+                Console.WriteLine("Origin From: {0} To: {1}", fromOriginPoint, toOriginPoint);
+
+                for (int j = 0; j < splits; j++)
+                {
+                    Console.WriteLine("Request {0} - {1}", i, j);
+
+                    int fromDestinationPoint = j * 10;
+                    int toDestinationPoint = fromDestinationPoint + 10;
+
+                    DistanceMatrixRequest request = new DistanceMatrixRequest
+                    {
+                        WaypointsOrigin = PopulateSegmentWayPoints(_matrixGPSPoints.OriginPoints, fromOriginPoint, toOriginPoint),
+                        WaypointsDestination = PopulateSegmentWayPoints(_matrixGPSPoints.DestinationPoints, fromDestinationPoint, toDestinationPoint),
+
+                        Mode = TravelMode.driving
+                    };
+
+                    var response = new DistanceMatrixService().GetResponse(request);
+
+                    PrintResponseMatrix(request, response);
+                }                    
+            }
 
             Console.ReadKey();
         }
@@ -149,7 +208,7 @@ namespace DistanceMatrixTest.Model
                 //Console.WriteLine("Distance: " + row.Elements.First().distance.Text + "\tDuration: " + row.Elements.First().duration.Text);
             }
 
-            using (StreamWriter outfile = new StreamWriter(@"D:\GoogleDistanceMatrix_N-"+_matrixGPSPoints.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss") + ".csv"))
+            using (StreamWriter outfile = new StreamWriter(@"D:\GoogleDistanceMatrix_N-"+_matrixGPSPoints.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
             {
                 for (int row = 0; row < request.WaypointsDestination.Count + 1; row++)
                 {
