@@ -10,7 +10,9 @@ namespace DistanceMatrixTest
     {
         static void Main(string[] args)
         {
-            MatrixGPSPoints matrixGPSPoints = new MatrixGPSPoints(5);
+            //Create a Matrix of N x N points and calculate all the matrix distances and times
+            int N = 4;
+            MatrixGPSPoints matrixGPSPoints = new MatrixGPSPoints(N);
             GoogleDistanceMatrix googleDM = new GoogleDistanceMatrix(matrixGPSPoints);
 
             //googleDM.DrivingDistancebyLngLatHasOneOriginAndDestinationAdresses();

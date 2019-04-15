@@ -25,7 +25,7 @@ namespace DistanceMatrixTest.Model
 
             foreach (var gpsPoint in gpsPoints)
             {
-                wayPoints.Add(new LatLng(gpsPoint.Latitude, gpsPoint.Latitude));
+                wayPoints.Add(new LatLng(gpsPoint.Latitude, gpsPoint.Longitude));
             }
 
             return wayPoints;
@@ -139,6 +139,8 @@ namespace DistanceMatrixTest.Model
                     //Print the destinies
                     response_matrix[i_dest + 1, 0] = request.WaypointsDestination[i_dest].ToString();
 
+                    if (element.distance  == null) continue;
+
                     response_matrix[i_dest + 1, i_orig + 1] = "Dist: " + element.distance.Text + " / Dur: " + element.duration.Text;
                     ++i_dest;
                 }
@@ -147,7 +149,7 @@ namespace DistanceMatrixTest.Model
                 //Console.WriteLine("Distance: " + row.Elements.First().distance.Text + "\tDuration: " + row.Elements.First().duration.Text);
             }
 
-            using (StreamWriter outfile = new StreamWriter(@"D:\GoogleDistanceMatrix_"+_matrixGPSPoints.QuantityOfOriginsAndDestinations + DateTime.Now.ToString("yyMMddHHmmss") + ".csv"))
+            using (StreamWriter outfile = new StreamWriter(@"D:\GoogleDistanceMatrix_N-"+_matrixGPSPoints.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss") + ".csv"))
             {
                 for (int row = 0; row < request.WaypointsDestination.Count + 1; row++)
                 {

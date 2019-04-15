@@ -43,6 +43,8 @@ namespace DistanceMatrixTest.Model
                 {
                     this.Latitude = 0;
                     this.Longitude = 0;
+
+                    Console.WriteLine("Exception, point zero: " + latitude + " - " + longitude);
                 }
             }
 
@@ -104,6 +106,9 @@ namespace DistanceMatrixTest.Model
                     if (currentQuantity >= quantityOfOriginsAndDestinations) break;
                 }
             }
+
+            Console.WriteLine("Total OriginPoints: {0}", OriginPoints.Count);
+            Console.WriteLine("Total DestinationPoints: {0}", DestinationPoints.Count);
         }
 
     }
