@@ -16,10 +16,32 @@ namespace DistanceMatrixTest.Model
         private List<GPSLatLng> _originPoints = new List<GPSLatLng>();
         private List<GPSLatLng> _destinationPoints = new List<GPSLatLng>();
 
+        private DistDurText[,] _distDurTextMatrix;
+        private DistDurValue[,] _distDurValueMatrix;
+        
+        public int QuantityOfOriginsAndDestinations { get => _quantityOfOriginsAndDestinations; set => _quantityOfOriginsAndDestinations = value; }
+
         public List<GPSLatLng> OriginPoints { get => _originPoints; set => _originPoints = value; }
         public List<GPSLatLng> DestinationPoints { get => _destinationPoints; set => _destinationPoints = value; }
+        
+        public DistDurText[,] DistDurTextMatrix { get => _distDurTextMatrix; set => _distDurTextMatrix = value; }
+        public DistDurValue[,] DistDurValueMatrix { get => _distDurValueMatrix; set => _distDurValueMatrix = value; }
 
-        public int QuantityOfOriginsAndDestinations { get => _quantityOfOriginsAndDestinations; set => _quantityOfOriginsAndDestinations = value; }
+        public MatrixGPSPoints(int quantityOfOriginsAndDestinations)
+        {
+            if (quantityOfOriginsAndDestinations > 10 && quantityOfOriginsAndDestinations % 10 != 0)
+            {
+                Console.WriteLine("If N is major of 10, the number should be divisible by 10");
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
+
+            QuantityOfOriginsAndDestinations = quantityOfOriginsAndDestinations;
+            PopulateOriginsAndDestinations(quantityOfOriginsAndDestinations);
+
+            DistDurTextMatrix = new DistDurText[quantityOfOriginsAndDestinations, quantityOfOriginsAndDestinations];
+            DistDurValueMatrix = new DistDurValue[quantityOfOriginsAndDestinations, quantityOfOriginsAndDestinations];
+        }
 
         public class GPSLatLng
         {
@@ -52,13 +74,19 @@ namespace DistanceMatrixTest.Model
             public double Longitude { get => _longitude; set => _longitude = value; }
         }
 
-        public class DistDurData
+        public class DistDurValue
         {
-            private double _distance;
-            private double _duration;
+            private long _distance;
+            private long _duration;
 
-            public double Distance { get => _distance; set => _distance = value; }
-            public double Duration { get => _duration; set => _duration = value; }
+            public DistDurValue(long distance, long duration)
+            {
+                this._distance = distance;
+                this._duration = duration;
+            }
+
+            public long Distance { get => _distance; set => _distance = value; }
+            public long Duration { get => _duration; set => _duration = value; }
         }
 
         public class DistDurText
@@ -66,14 +94,14 @@ namespace DistanceMatrixTest.Model
             private string _distance;
             private string _duration;
 
+            public DistDurText(string distance, string duration)
+            {
+                this._distance = distance;
+                this._duration = duration;
+            }
+
             public string Distance { get => _distance; set => _distance = value; }
             public string Duration { get => _duration; set => _duration = value; }
-        }
-
-        public MatrixGPSPoints(int quantityOfOriginsAndDestinations)
-        {
-            QuantityOfOriginsAndDestinations = quantityOfOriginsAndDestinations;
-            PopulateOriginsAndDestinations(quantityOfOriginsAndDestinations);
         }
 
         /// <summary>
@@ -111,5 +139,54 @@ namespace DistanceMatrixTest.Model
             Console.WriteLine("Total DestinationPoints: {0}", DestinationPoints.Count);
         }
 
+        public void PrintDistDurTextMatrix()
+        {
+            using (StreamWriter outfile = new StreamWriter(@"D:\output\GoogleDistanceMatrix_N-" + this.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
+            {
+                for (int row = -1; row < QuantityOfOriginsAndDestinations; row++)
+                {
+                    string content = "";
+
+                    for (int col = -1; col < QuantityOfOriginsAndDestinations; col++)
+                    {
+                        //Print the destinations in the row 0
+                        if (row == -1)
+                        {
+                            if (col >= 0)
+                            {
+                                content += ";" + DestinationPoints[col].Latitude + ", " + DestinationPoints[col].Longitude; //For CSV print
+                                Console.Write(String.Format("\t{0}", DestinationPoints[col].Latitude + ", " + DestinationPoints[col].Longitude)); //For console print
+                            }
+                        }
+                        else
+                        {
+                            //Print the origins in the col 0
+                            if (col == -1)
+                            {
+                                content += OriginPoints[row].Latitude + ", " + OriginPoints[row].Longitude + ";"; //For CSV print
+                                Console.Write(String.Format("{0}\t", OriginPoints[row].Latitude + ", " + OriginPoints[row].Longitude)); //For console print
+                            }
+                            else
+                            {
+                                //Sometime there is an error on a particular element
+                                if (DistDurTextMatrix[row, col] != null)
+                                {
+                                    content += "Dist: " + DistDurTextMatrix[row, col].Distance + " / Dur: " + DistDurTextMatrix[row, col].Duration + ";"; //For CSV print
+                                    Console.Write(String.Format("{0}\t", "Dist: " + DistDurTextMatrix[row, col].Distance + " / Dur: " + DistDurTextMatrix[row, col].Duration)); //For console print
+                                }
+                                else
+                                {
+                                    content += "Dist: NULL / Dur: NULL;"; //For CSV print
+                                    Console.Write(String.Format("{0}\t", "Dist: NULL / Dur: NULL;")); //For console print
+                                }
+                            }
+                        }
+                    }
+                    //trying to write data to csv
+                    outfile.WriteLine(content);
+                    Console.WriteLine();
+                }
+            }
+        }
     }
 }

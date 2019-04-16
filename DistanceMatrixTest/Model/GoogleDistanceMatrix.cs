@@ -95,7 +95,7 @@ namespace DistanceMatrixTest.Model
 
             var response = new DistanceMatrixService().GetResponse(request);
 
-            PrintResponseMatrix(request, response);
+            SimplePrintResponseMatrix(request, response);
 
             Console.ReadKey();
         }
@@ -133,9 +133,11 @@ namespace DistanceMatrixTest.Model
 
                     var response = new DistanceMatrixService().GetResponse(request);
 
-                    PrintResponseMatrix(request, response);
+                    AddToResponseMatrix(request, response, fromOriginPoint, fromDestinationPoint);
                 }                    
             }
+
+            _matrixGPSPoints.PrintDistDurTextMatrix();
 
             Console.ReadKey();
         }
@@ -178,7 +180,7 @@ namespace DistanceMatrixTest.Model
             }
         }
 
-        private void PrintResponseMatrix(DistanceMatrixRequest request, DistanceMatrixResponse response)
+        private void SimplePrintResponseMatrix(DistanceMatrixRequest request, DistanceMatrixResponse response)
         {
             int i_orig = 0, i_dest = 0;
 
@@ -208,7 +210,7 @@ namespace DistanceMatrixTest.Model
                 //Console.WriteLine("Distance: " + row.Elements.First().distance.Text + "\tDuration: " + row.Elements.First().duration.Text);
             }
 
-            using (StreamWriter outfile = new StreamWriter(@"D:\GoogleDistanceMatrix_N-"+_matrixGPSPoints.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
+            using (StreamWriter outfile = new StreamWriter(@"D:\output\GoogleDistanceMatrix_N-"+_matrixGPSPoints.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
             {
                 for (int row = 0; row < request.WaypointsDestination.Count + 1; row++)
                 {
@@ -224,6 +226,37 @@ namespace DistanceMatrixTest.Model
                 }
 
 
+            }
+        }
+
+        private void AddToResponseMatrix(DistanceMatrixRequest request, DistanceMatrixResponse response, int fromOrigPos = 0, int fromDestPos = 0)
+        {
+            //Maybe I don't need the size of the matrix, It comes defined in the response temporal avoid this paramenters(int toOrigPos = 10, , int toDestPos = 10)
+            int i_orig = fromOrigPos, i_dest = fromDestPos;
+
+            //string[,] response_matrix = new string[request.WaypointsDestination.Count + 1, request.WaypointsOrigin.Count + 1];
+
+            Console.WriteLine(response.Status);
+            Console.WriteLine(response.ErrorMessage);
+            Console.WriteLine("Rows returned: " + response.Rows.Length);
+
+            foreach (var row in response.Rows)
+            {
+
+                foreach (var element in row.Elements)
+                {
+                    if (element.distance == null) continue;
+                    
+                    //Console.WriteLine("DistDurValueMatrix==> i_dest:{0}, i_orig:{1}", i_dest, i_orig);
+
+                    _matrixGPSPoints.DistDurValueMatrix[i_dest, i_orig] = new MatrixGPSPoints.DistDurValue(element.distance.Value, element.duration.Value);
+
+                    _matrixGPSPoints.DistDurTextMatrix[i_dest, i_orig] = new MatrixGPSPoints.DistDurText(element.distance.Text, element.duration.Text);
+
+                    ++i_dest;
+                }
+                ++i_orig;
+                i_dest = fromDestPos;
             }
         }
     }
