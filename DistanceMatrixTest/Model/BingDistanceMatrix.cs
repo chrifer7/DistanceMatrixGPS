@@ -234,6 +234,68 @@ namespace DistanceMatrixTest.Model
 
             Console.ReadLine();
         }
+
+
+        /// <summary>
+        ///  Location Recognition Test
+        ///  
+        /// https://docs.microsoft.com/en-us/bingmaps/rest-services/routes/calculate-a-distance-matrix
+        /// </summary>
+        static public void DistantMatrixTest()
+        {
+            Console.WriteLine("Running Distance Matrix Test");
+
+            var request = new DistanceMatrixRequest()
+            {
+                BingMapsKey = _ApiKey,
+
+                Origins = new List<SimpleWaypoint>
+                {
+                    new SimpleWaypoint(47.58162076,7.18289976),
+                    new SimpleWaypoint(46.63146309,4.23322802),
+                    new SimpleWaypoint(47.60999809,2.47722561),
+                    new SimpleWaypoint(48.63594493,11.13342617),
+                    new SimpleWaypoint(45.00055829,8.43115231),
+                    new SimpleWaypoint(46.1774775,4.34958805),
+                    new SimpleWaypoint(50.22820419,2.78969141),
+                    new SimpleWaypoint(46.47207431,11.16166495),
+                    new SimpleWaypoint(48.40098444,5.27661128),
+                    new SimpleWaypoint(45.91952505,4.23231255)
+                },
+                Destinations = new List<SimpleWaypoint>
+                {
+                    new SimpleWaypoint(47.58162076,7.18289976),
+                    new SimpleWaypoint(46.63146309,4.23322802),
+                    new SimpleWaypoint(47.60999809,2.47722561),
+                    new SimpleWaypoint(48.63594493,11.13342617),
+                    new SimpleWaypoint(45.00055829,8.43115231),
+                    new SimpleWaypoint(46.1774775,4.34958805),
+                    new SimpleWaypoint(50.22820419,2.78969141),
+                    new SimpleWaypoint(46.47207431,11.16166495),
+                    new SimpleWaypoint(48.40098444,5.27661128),
+                    new SimpleWaypoint(45.91952505,4.23231255)
+                },
+
+                TravelMode = TravelModeType.Driving, //TravelModeType.Truck
+                DistanceUnits = DistanceUnitType.Kilometers,
+                TimeUnits = TimeUnitType.Minute,
+                Resolution = 1
+            };
+
+            //var response = request.Execute();
+
+            var resources = GetResourcesFromRequest(request);
+
+            var r = (resources[0] as DistanceMatrix);
+
+            foreach (var cell in r.Results)
+            {
+                Console.WriteLine("OriginIndex: {0}, DestinationIndex: {1}, TravelDistance: {2}, TravelDuration: {3}", 
+                                    cell.OriginIndex, cell.DestinationIndex, cell.TravelDistance, cell.TravelDuration);
+            }
+
+            Console.ReadLine();
+        }
     }
 
 }
