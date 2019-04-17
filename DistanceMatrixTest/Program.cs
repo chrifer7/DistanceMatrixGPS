@@ -12,8 +12,10 @@ namespace DistanceMatrixTest
         {
             //Create a Matrix of N x N points and calculate all the matrix distances and times
             //By now only acepts N = 10x
-            int N = 10;
+            int N = 4;
             MatrixGPSPoints matrixGPSPoints = new MatrixGPSPoints(N);
+
+            Console.WriteLine("\n\n\n\n");
 
             Console.WriteLine("/******************************************************/");
             Console.WriteLine("/****************** Google Maps API *******************/");
@@ -30,7 +32,7 @@ namespace DistanceMatrixTest
             Console.WriteLine("\n\n\n\n");
 
             Console.WriteLine("/******************************************************/");
-            Console.WriteLine("/****************** Bing Maps API *******************/");
+            Console.WriteLine("/******************* Bing Maps API ********************/");
             Console.WriteLine("/******************************************************/");
 
             BingDistanceMatrix bingDM = new BingDistanceMatrix(matrixGPSPoints);
