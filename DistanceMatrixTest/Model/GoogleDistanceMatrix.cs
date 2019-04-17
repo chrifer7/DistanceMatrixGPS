@@ -10,11 +10,12 @@ namespace DistanceMatrixTest.Model
 {
     class GoogleDistanceMatrix
     {
+        static private string _ApiKey = "AIzaSyAx371kWMfkkUt3-lnMR_8JlNqC67mb33g";
         private MatrixGPSPoints _matrixGPSPoints;
 
         public GoogleDistanceMatrix(MatrixGPSPoints matrixGPSPoints)
         {
-            GoogleSigned.AssignAllServices(new GoogleSigned("AIzaSyAx371kWMfkkUt3-lnMR_8JlNqC67mb33g"));
+            GoogleSigned.AssignAllServices(new GoogleSigned(_ApiKey));
 
             this._matrixGPSPoints = matrixGPSPoints;
         }
@@ -42,7 +43,7 @@ namespace DistanceMatrixTest.Model
                 wayPoints.Add(new LatLng(gpsPoints[i].Latitude, gpsPoints[i].Longitude));
             }
 
-            Console.WriteLine("\nGPS Points");
+            Console.WriteLine("\nGPS Points to Google (Location)");
             gpsPoints.ForEach(item => Console.Write(item.Latitude + "," + item.Longitude + " / "));
             Console.WriteLine("\nWay Points from: {0} to: {1}", fromPoint, toPoint);
             wayPoints.ForEach(item => Console.Write(item + " / "));
@@ -50,12 +51,8 @@ namespace DistanceMatrixTest.Model
             return wayPoints;
         }
 
-        /// <summary>
-        /// Calculate distances and times to travel from many origins to many destinations
-        /// </summary>
-        public void DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdresses()
+        public void DistantMatrixTest()
         {
-            /*
             DistanceMatrixRequest request = new DistanceMatrixRequest()
             {
                 WaypointsOrigin = new List<Location> {
@@ -81,10 +78,22 @@ namespace DistanceMatrixTest.Model
                                                         new LatLng(46.47207431M,11.16166495M),
                                                         new LatLng(48.40098444M,5.27661128M),
                                                         new LatLng(45.91952505M,4.23231255M)
-                                                    }
+                                                    },
+                Mode = TravelMode.driving
             };
-            */
 
+            var response = new DistanceMatrixService().GetResponse(request);
+
+            SimplePrintResponseMatrix(request, response);
+
+            
+        }
+
+        /// <summary>
+        /// Google: Calculates the distances and times to travel from many origins to many destinations
+        /// </summary>
+        public void DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdresses()
+        {
             DistanceMatrixRequest request = new DistanceMatrixRequest
             {
                 WaypointsOrigin = PopulateWayPoints(_matrixGPSPoints.OriginPoints),
@@ -96,12 +105,11 @@ namespace DistanceMatrixTest.Model
             var response = new DistanceMatrixService().GetResponse(request);
 
             SimplePrintResponseMatrix(request, response);
-
-            Console.ReadKey();
+            
         }
 
         /// <summary>
-        /// Calculate distances and times to travel from many origins to many destinations using many requests to avoid the limitation of 10 x 10 
+        /// Google: Calculates the distances and times to travel from many origins to many destinations using many requests to avoid the limitation of 10 x 10 
         /// </summary>
         public void DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdressesSplitted()
         {
@@ -137,13 +145,13 @@ namespace DistanceMatrixTest.Model
                 }                    
             }
 
-            _matrixGPSPoints.PrintDistDurTextMatrix();
+            _matrixGPSPoints.PrintDistDurTextMatrix("Google");
 
-            Console.ReadKey();
+            
         }
 
         /// <summary>
-        /// Calculate distances and times to travel from one origin to many destinations
+        /// Google: Calculates the distances and times to travel from one origin to many destinations
         /// </summary>
         private void DrivingDistancebyLngLatHasOneOriginAndDestinationAdresses()
         {
@@ -159,7 +167,7 @@ namespace DistanceMatrixTest.Model
             //Console.WriteLine(response.Rows.First().Elements.First().duration.Text);
             PrintResponseList(request, response);
 
-            Console.ReadKey();
+            
         }
 
         private void PrintResponseList(DistanceMatrixRequest request, DistanceMatrixResponse response)
@@ -193,16 +201,16 @@ namespace DistanceMatrixTest.Model
             foreach (var row in response.Rows)
             {
                 //Print the origins
-                response_matrix[i_dest, i_orig + 1] = request.WaypointsOrigin[i_orig].ToString();
+                response_matrix[i_orig + 1, 0] = request.WaypointsOrigin[i_orig].ToString();
 
                 foreach (var element in row.Elements)
                 {
                     //Print the destinies
-                    response_matrix[i_dest + 1, 0] = request.WaypointsDestination[i_dest].ToString();
+                    response_matrix[0, i_dest + 1] = request.WaypointsDestination[i_dest].ToString();
 
                     if (element.distance  == null) continue;
 
-                    response_matrix[i_dest + 1, i_orig + 1] = "Dist: " + element.distance.Text + " / Dur: " + element.duration.Text;
+                    response_matrix[i_orig + 1, i_dest + 1] = "Dist: " + element.distance.Text + " / Dur: " + element.duration.Text;
                     ++i_dest;
                 }
                 ++i_orig;
@@ -246,12 +254,12 @@ namespace DistanceMatrixTest.Model
                 foreach (var element in row.Elements)
                 {
                     if (element.distance == null) continue;
-                    
-                    //Console.WriteLine("DistDurValueMatrix==> i_dest:{0}, i_orig:{1}", i_dest, i_orig);
 
-                    _matrixGPSPoints.DistDurValueMatrix[i_dest, i_orig] = new MatrixGPSPoints.DistDurValue(element.distance.Value, element.duration.Value);
+                    //Console.WriteLine("DistDurValueMatrix==> i_dest:{0}, i_orig:{1}", i_orig, i_dest);
 
-                    _matrixGPSPoints.DistDurTextMatrix[i_dest, i_orig] = new MatrixGPSPoints.DistDurText(element.distance.Text, element.duration.Text);
+                    _matrixGPSPoints.DistDurValueMatrix[i_orig, i_dest] = new MatrixGPSPoints.DistDurValue(element.distance.Value, element.duration.Value);
+
+                    _matrixGPSPoints.DistDurTextMatrix[i_orig, i_dest] = new MatrixGPSPoints.DistDurText(element.distance.Text, element.duration.Text);
 
                     ++i_dest;
                 }

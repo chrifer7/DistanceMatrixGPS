@@ -12,16 +12,21 @@ namespace DistanceMatrixTest
         {
             //Create a Matrix of N x N points and calculate all the matrix distances and times
             //By now only acepts N = 10x
-            int N = 2;
-            //MatrixGPSPoints matrixGPSPoints = new MatrixGPSPoints(N);
-            //GoogleDistanceMatrix googleDM = new GoogleDistanceMatrix(matrixGPSPoints);
+            int N = 20;
+            MatrixGPSPoints matrixGPSPoints = new MatrixGPSPoints(N);
+            GoogleDistanceMatrix googleDM = new GoogleDistanceMatrix(matrixGPSPoints);
 
             //googleDM.DrivingDistancebyLngLatHasOneOriginAndDestinationAdresses();
             //googleDM.DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdresses();
             //googleDM.DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdressesSplitted();
 
-            
-            BingDistanceMatrix.DistantMatrixTest();
+
+            BingDistanceMatrix bingDM = new BingDistanceMatrix(matrixGPSPoints);
+            //bingDM.DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdresses();
+            bingDM.DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdressesSplitted();
+
+            Console.WriteLine("\n\n\nThe process has finished.\n\nPress any key...");
+            Console.ReadKey();
         }
 
 

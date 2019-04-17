@@ -76,17 +76,17 @@ namespace DistanceMatrixTest.Model
 
         public class DistDurValue
         {
-            private long _distance;
-            private long _duration;
+            private double _distance;
+            private double _duration;
 
-            public DistDurValue(long distance, long duration)
+            public DistDurValue(double distance, double duration)
             {
                 this._distance = distance;
                 this._duration = duration;
             }
 
-            public long Distance { get => _distance; set => _distance = value; }
-            public long Duration { get => _duration; set => _duration = value; }
+            public double Distance { get => _distance; set => _distance = value; }
+            public double Duration { get => _duration; set => _duration = value; }
         }
 
         public class DistDurText
@@ -139,9 +139,9 @@ namespace DistanceMatrixTest.Model
             Console.WriteLine("Total DestinationPoints: {0}", DestinationPoints.Count);
         }
 
-        public void PrintDistDurTextMatrix()
+        public void PrintDistDurTextMatrix(string _prefixName)
         {
-            using (StreamWriter outfile = new StreamWriter(@"D:\output\GoogleDistanceMatrix_N-" + this.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
+            using (StreamWriter outfile = new StreamWriter(@"D:\output\"+ _prefixName+"DistanceMatrix_N-" + this.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
             {
                 for (int row = -1; row < QuantityOfOriginsAndDestinations; row++)
                 {
