@@ -12,6 +12,8 @@ namespace DistanceMatrixTest.Model
 
         private MatrixGPSPoints _matrixGPSPoints;
 
+        public static int SizeOfSubMatrix = 10;
+
         public BingDistanceMatrix(MatrixGPSPoints matrixGPSPoints)
         {
             this._matrixGPSPoints = matrixGPSPoints;
@@ -150,18 +152,18 @@ namespace DistanceMatrixTest.Model
         }
 
         /// <summary>
-        /// Bing: Calculates the distances and times to travel from many origins to many destinations using many requests to avoid the limitation of 10 x 10 
+        /// Bing: Calculates the distances and times to travel from many origins to many destinations using many requests to avoid the limitation of (50 x 50). But uses a size of 10 x 10.
         /// </summary>
         public void DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdressesSplitted()
         {
-            int splits = (_matrixGPSPoints.QuantityOfOriginsAndDestinations + 9) / 10; //Equivalent to Math.Ceiling
+            int splits = (_matrixGPSPoints.QuantityOfOriginsAndDestinations + 9) / SizeOfSubMatrix; //Equivalent to Math.Ceiling
             Console.WriteLine("Number of splits {0}", splits);
 
             for (int i = 0; i < splits; i++)
             {
 
-                int fromOriginPoint = i * 10;
-                int toOriginPoint = fromOriginPoint + 10;//(_matrixGPSPoints.QuantityOfOriginsAndDestinations < fromOriginPoint + 10 ? _matrixGPSPoints.QuantityOfOriginsAndDestinations : fromOriginPoint + 10);
+                int fromOriginPoint = i * SizeOfSubMatrix;
+                int toOriginPoint = fromOriginPoint + SizeOfSubMatrix;//(_matrixGPSPoints.QuantityOfOriginsAndDestinations < fromOriginPoint + SizeOfSubMatrix ? _matrixGPSPoints.QuantityOfOriginsAndDestinations : fromOriginPoint + SizeOfSubMatrix);
 
                 Console.WriteLine("Origin From: {0} To: {1}", fromOriginPoint, toOriginPoint);
 
@@ -169,8 +171,8 @@ namespace DistanceMatrixTest.Model
                 {
                     Console.WriteLine("Request {0} - {1}", i, j);
 
-                    int fromDestinationPoint = j * 10;
-                    int toDestinationPoint = fromDestinationPoint + 10;
+                    int fromDestinationPoint = j * SizeOfSubMatrix;
+                    int toDestinationPoint = fromDestinationPoint + SizeOfSubMatrix;
 
                     DistanceMatrixRequest request = new DistanceMatrixRequest
                     {
@@ -273,6 +275,31 @@ namespace DistanceMatrixTest.Model
 
             }
 
+        }
+
+        /// <summary>
+        /// Bing: Estimates the quota consumption
+        /// </summary>
+        public double QuotaConsumptionEstimation()
+        {
+            //-0.0003357142857
+
+            var couta = _matrixGPSPoints.QuantityOfOriginsAndDestinations * _matrixGPSPoints.QuantityOfOriginsAndDestinations;
+
+            return couta;
+        }
+
+        /// <summary>
+        /// Bing: Estimate the price considering a monthly consumption between 250K and 500K transactions and an internal website implementation. Windows Development App offers Less than 50,000 cumulative billable transactions with any 24-hour period
+        /// </summary>
+        public double PriceForTransactionEstimation()
+        {
+            //https://www.microsoft.com/en-us/maps/licensing/options
+            //http://www.noussintelligence.com/using-the-bing-maps-distance-matrix-api-for-solving-the-travelling-salesman-problem-the-origin-of-routing-problems/
+
+            var price = QuotaConsumptionEstimation() * (2154.35 / 250000.0);
+
+            return price;
         }
 
 

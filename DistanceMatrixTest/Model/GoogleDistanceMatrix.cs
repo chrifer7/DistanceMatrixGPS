@@ -13,6 +13,8 @@ namespace DistanceMatrixTest.Model
         static private string _ApiKey = "AIzaSyAx371kWMfkkUt3-lnMR_8JlNqC67mb33g";
         private MatrixGPSPoints _matrixGPSPoints;
 
+        public static int SizeOfSubMatrix = 10;
+
         public GoogleDistanceMatrix(MatrixGPSPoints matrixGPSPoints)
         {
             GoogleSigned.AssignAllServices(new GoogleSigned(_ApiKey));
@@ -113,14 +115,14 @@ namespace DistanceMatrixTest.Model
         /// </summary>
         public void DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdressesSplitted()
         {
-            int splits = (_matrixGPSPoints.QuantityOfOriginsAndDestinations + 9)/ 10; //Equivalent to Math.Ceiling
+            int splits = (_matrixGPSPoints.QuantityOfOriginsAndDestinations + 9)/ SizeOfSubMatrix; //Equivalent to Math.Ceiling
             Console.WriteLine("Number of splits {0}", splits);
 
             for (int i = 0; i < splits; i++)
             {
                 
-                int fromOriginPoint = i * 10;
-                int toOriginPoint = fromOriginPoint + 10;//(_matrixGPSPoints.QuantityOfOriginsAndDestinations < fromOriginPoint + 10 ? _matrixGPSPoints.QuantityOfOriginsAndDestinations : fromOriginPoint + 10);
+                int fromOriginPoint = i * SizeOfSubMatrix;
+                int toOriginPoint = fromOriginPoint + SizeOfSubMatrix;//(_matrixGPSPoints.QuantityOfOriginsAndDestinations < fromOriginPoint + SizeOfSubMatrix ? _matrixGPSPoints.QuantityOfOriginsAndDestinations : fromOriginPoint + SizeOfSubMatrix);
 
                 Console.WriteLine("Origin From: {0} To: {1}", fromOriginPoint, toOriginPoint);
 
@@ -128,8 +130,8 @@ namespace DistanceMatrixTest.Model
                 {
                     Console.WriteLine("Request {0} - {1}", i, j);
 
-                    int fromDestinationPoint = j * 10;
-                    int toDestinationPoint = fromDestinationPoint + 10;
+                    int fromDestinationPoint = j * SizeOfSubMatrix;
+                    int toDestinationPoint = fromDestinationPoint + SizeOfSubMatrix;
 
                     DistanceMatrixRequest request = new DistanceMatrixRequest
                     {
@@ -266,6 +268,31 @@ namespace DistanceMatrixTest.Model
                 ++i_orig;
                 i_dest = fromDestPos;
             }
+        }
+
+        /// <summary>
+        /// Google: Estimates the quota consumption
+        /// </summary>
+        public double QuotaConsumptionEstimation() {
+            //-0.0003357142857
+
+            var couta = 0.0006 + -3.36E-04 * _matrixGPSPoints.QuantityOfOriginsAndDestinations + 
+                1.666732143 * _matrixGPSPoints.QuantityOfOriginsAndDestinations * _matrixGPSPoints.QuantityOfOriginsAndDestinations;
+
+            return couta;
+        }
+
+        /// <summary>
+        /// Google: Estimate the price considering a monthly consumption between 100K and 500K elements (consider $200 monthly credit)
+        /// </summary>
+        public double PriceForTransactionEstimation()
+        {
+            //https://developers.google.com/maps/documentation/distance-matrix/usage-and-billing
+            //$200 monthly credit
+
+            var price = QuotaConsumptionEstimation() * 0.004;
+
+            return price;
         }
     }
 }
