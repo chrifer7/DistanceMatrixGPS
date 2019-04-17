@@ -165,7 +165,7 @@ namespace DistanceMatrixTest.Model
                 int fromOriginPoint = i * SizeOfSubMatrix;
                 int toOriginPoint;//(_matrixGPSPoints.QuantityOfOriginsAndDestinations < fromOriginPoint + SizeOfSubMatrix ? _matrixGPSPoints.QuantityOfOriginsAndDestinations : fromOriginPoint + SizeOfSubMatrix);
 
-                if (i == splits - 1) //if it is the last segment                
+                if ((i == splits - 1) && (_matrixGPSPoints.QuantityOfOriginsAndDestinations % SizeOfSubMatrix != 0)) //if it is the last segment                
                     toOriginPoint = _matrixGPSPoints.QuantityOfOriginsAndDestinations - fromOriginPoint;                
                 else
                     toOriginPoint = fromOriginPoint + SizeOfSubMatrix;

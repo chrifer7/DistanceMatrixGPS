@@ -12,14 +12,15 @@ namespace DistanceMatrixTest
         {
             //Create a Matrix of N x N points and calculate all the matrix distances and times
             //By now only acepts N = 10x
-            int N = 4;
+            int N = 250;
             MatrixGPSPoints matrixGPSPoints = new MatrixGPSPoints(N);
 
+            
             Console.WriteLine("\n\n\n\n");
 
-            Console.WriteLine("/******************************************************/");
-            Console.WriteLine("/****************** Google Maps API *******************/");
-            Console.WriteLine("/******************************************************/");
+            Console.WriteLine("******************************************************");
+            Console.WriteLine("****************** Google Maps API *******************");
+            Console.WriteLine("******************************************************");
 
             GoogleDistanceMatrix googleDM = new GoogleDistanceMatrix(matrixGPSPoints);
 
@@ -30,10 +31,11 @@ namespace DistanceMatrixTest
             var elapsedMsGoogle = watchGoogle.ElapsedMilliseconds;
 
             Console.WriteLine("\n\n\n\n");
-
-            Console.WriteLine("/******************************************************/");
-            Console.WriteLine("/******************* Bing Maps API ********************/");
-            Console.WriteLine("/******************************************************/");
+            
+            
+            Console.WriteLine("******************************************************");
+            Console.WriteLine("******************* Bing Maps API ********************");
+            Console.WriteLine("******************************************************");
 
             BingDistanceMatrix bingDM = new BingDistanceMatrix(matrixGPSPoints);
 
@@ -42,11 +44,17 @@ namespace DistanceMatrixTest
             bingDM.DrivingDistancebyLngLatHasManyOriginsAndManyDestinationsAdressesSplitted();
             watchBing.Stop();
             var elapsedMsBing = watchBing.ElapsedMilliseconds;
+            
+            Console.WriteLine("********************** SUMARY ************************");
+            Console.WriteLine("Total OriginPoints: {0}", N);
+            Console.WriteLine("Total DestinationPoints: {0}", N);
 
+            
             Console.WriteLine("\n\nGoogle Execution Time: {0}", elapsedMsGoogle);
             Console.WriteLine("Google estimated cuota of elements consumed: {0}", googleDM.QuotaConsumptionEstimation());
             Console.WriteLine("Google estimated price for the execution: ${0} \n" +
                 "(considering a monthly consumption between 100K and 500K elements)", googleDM.PriceForTransactionEstimation());
+            
 
             Console.WriteLine("\n\nBing Execution Time: {0}", elapsedMsBing);
             Console.WriteLine("Bing estimated cuota of elements consumed: {0}", bingDM.QuotaConsumptionEstimation());
