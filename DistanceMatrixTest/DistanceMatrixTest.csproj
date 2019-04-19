@@ -17,6 +17,7 @@
     <PackageReference Include="BingMapsRESTToolkit" Version="1.1.4" />
     <PackageReference Include="gmaps-api-net" Version="0.32.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>

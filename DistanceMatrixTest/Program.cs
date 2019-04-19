@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using DistanceMatrixTest.Model;
 
+using System.Configuration;
+
 
 namespace DistanceMatrixTest
 {   
@@ -14,6 +16,12 @@ namespace DistanceMatrixTest
 
         static void Main(string[] args)
         {
+            {//Temporaly write the keys here
+                //var keys = System.Configuration.ConfigurationManager.AppSettings.AllKeys;
+                //foreach (var k in keys) Console.WriteLine("key: {0} \t value: {1}", k, ConfigurationManager.AppSettings[k]);
+                //AddUpdateAppSettings("BingAPIKey", "AnxzBGPbW-0XE-v8FbLhGCbVPlch-7AyT9b_Fn9LnfXekr8hRL_2lblal9_FNEaK");
+                //AddUpdateAppSettings("GoogleAPIKey", "AIzaSyAx371kWMfkkUt3-lnMR_8JlNqC67mb33g");
+            }
             System.Diagnostics.Stopwatch watchGoogle;
             long elapsedMsGoogle = 0;
             System.Diagnostics.Stopwatch watchBing;
@@ -26,7 +34,7 @@ namespace DistanceMatrixTest
             
             GoogleDistanceMatrix googleDM = new GoogleDistanceMatrix(matrixGPSPoints);
             BingDistanceMatrix bingDM = new BingDistanceMatrix(matrixGPSPoints);
-
+            
             if (CalculatesGoogle)
             {
                 { 
@@ -81,7 +89,31 @@ namespace DistanceMatrixTest
             Console.WriteLine("\n\n\nThe process has finished.\n\nPress any key...");
             Console.ReadKey();
         }
-
-
+        
+        static void AddUpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);                    
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                Console.WriteLine("Error writing app settings");
+            }
+        }
     }
+
+
 }
+

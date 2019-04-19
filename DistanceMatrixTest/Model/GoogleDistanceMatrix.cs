@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Google.Maps;
 using Google.Maps.DistanceMatrix;
-using static Google.Maps.DistanceMatrix.DistanceMatrixResponse;
 
 namespace DistanceMatrixTest.Model
 {
     class GoogleDistanceMatrix
     {
-        static private string _ApiKey = "AIzaSyAx371kWMfkkUt3-lnMR_8JlNqC67mb33g";
+        static private string _ApiKey;
         private MatrixGPSPoints _matrixGPSPoints;
 
         public static int SizeOfSubMatrix = 10;
@@ -20,6 +18,9 @@ namespace DistanceMatrixTest.Model
             GoogleSigned.AssignAllServices(new GoogleSigned(_ApiKey));
 
             this._matrixGPSPoints = matrixGPSPoints;
+
+            _ApiKey = System.Configuration.ConfigurationManager.AppSettings.Get("GoogleAPIKey");
+            //Console.WriteLine("GoogleKey: {0}", _ApiKey);
         }
 
         private List<Location> PopulateWayPoints(List<MatrixGPSPoints.GPSLatLng> gpsPoints)
@@ -220,7 +221,7 @@ namespace DistanceMatrixTest.Model
                 //Console.WriteLine("Distance: " + row.Elements.First().distance.Text + "\tDuration: " + row.Elements.First().duration.Text);
             }
 
-            using (StreamWriter outfile = new StreamWriter(@"D:\output\GoogleDistanceMatrix_N-"+_matrixGPSPoints.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
+            using (StreamWriter outfile = new StreamWriter(MatrixGPSPoints.OutputPath+"GoogleDistanceMatrix_N-"+_matrixGPSPoints.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
             {
                 for (int row = 0; row < request.WaypointsDestination.Count + 1; row++)
                 {

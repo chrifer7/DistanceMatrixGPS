@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using BingMapsRESTToolkit;
 
 namespace DistanceMatrixTest.Model
 {
     class BingDistanceMatrix
     {
-        static private string _ApiKey = "AnxzBGPbW-0XE-v8FbLhGCbVPlch-7AyT9b_Fn9LnfXekr8hRL_2lblal9_FNEaK";//System.Configuration.ConfigurationManager.AppSettings.Get("BingMapsKey");
+        static private string _ApiKey;
 
         private MatrixGPSPoints _matrixGPSPoints;
 
@@ -17,6 +16,9 @@ namespace DistanceMatrixTest.Model
         public BingDistanceMatrix(MatrixGPSPoints matrixGPSPoints)
         {
             this._matrixGPSPoints = matrixGPSPoints;
+
+            _ApiKey = System.Configuration.ConfigurationManager.AppSettings.Get("BingAPIKey");
+            //Console.WriteLine("BingKey: {0}", _ApiKey);
         }
 
         static private Resource[] GetResourcesFromRequest(BaseRestRequest rest_request)
@@ -239,7 +241,7 @@ namespace DistanceMatrixTest.Model
 
             }
 
-            using (StreamWriter outfile = new StreamWriter(@"D:\output\BingDistanceMatrix_N-" + _matrixGPSPoints.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
+            using (StreamWriter outfile = new StreamWriter(MatrixGPSPoints.OutputPath + "BingDistanceMatrix_N-" + _matrixGPSPoints.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
             {
                 for (int row = 0; row < _matrixGPSPoints.OriginPoints.Count + 1; row++)
                 {

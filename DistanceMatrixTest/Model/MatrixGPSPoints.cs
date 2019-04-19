@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace DistanceMatrixTest.Model
 {
@@ -18,7 +17,10 @@ namespace DistanceMatrixTest.Model
 
         private DistDurText[,] _distDurTextMatrix;
         private DistDurValue[,] _distDurValueMatrix;
-        
+
+        public static string DataPath = @"D:\projects\dotNet\DistanceMatrixGPS\DistanceMatrixTest\Data\";
+        public static string OutputPath = @"D:\output\";
+
         public int QuantityOfOriginsAndDestinations { get => _quantityOfOriginsAndDestinations; set => _quantityOfOriginsAndDestinations = value; }
 
         public List<GPSLatLng> OriginPoints { get => _originPoints; set => _originPoints = value; }
@@ -114,7 +116,7 @@ namespace DistanceMatrixTest.Model
                 quantityOfOriginsAndDestinations = 500;
 
             int currentQuantity = 0;
-            using (var reader = new StreamReader(@"D:\projects\dotNet\DistanceMatrixGPS\DistanceMatrixTest\Data\gps_500_points.csv"))
+            using (var reader = new StreamReader(DataPath+"gps_500_points.csv"))
             {
                 while (!reader.EndOfStream)
                 {
@@ -141,7 +143,7 @@ namespace DistanceMatrixTest.Model
 
         public void PrintDistDurTextMatrix(string _prefixName)
         {
-            using (StreamWriter outfile = new StreamWriter(@"D:\output\"+ _prefixName+"DistanceMatrix_N-" + this.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
+            using (StreamWriter outfile = new StreamWriter(OutputPath+ _prefixName+"DistanceMatrix_N-" + this.QuantityOfOriginsAndDestinations + "_" + DateTime.Now.ToString("yyMMddHHmmss.fff") + ".csv"))
             {
                 for (int row = -1; row < QuantityOfOriginsAndDestinations; row++)
                 {
