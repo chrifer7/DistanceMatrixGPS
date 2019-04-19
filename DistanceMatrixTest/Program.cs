@@ -10,7 +10,7 @@ namespace DistanceMatrixTest
 {   
     class Program
     {
-        public static bool CalculatesGoogle = true;
+        public static bool CalculatesGoogle = false;
         public static bool CalculatesBing = true;
         public static int N = 10;
 
@@ -29,7 +29,7 @@ namespace DistanceMatrixTest
 
             //Create a Matrix of N x N points and calculate all the matrix distances and times
             //By now only acepts N = 10x
-            N = 10;
+            //N = 10;
             MatrixGPSPoints matrixGPSPoints = new MatrixGPSPoints(N);
             
             GoogleDistanceMatrix googleDM = new GoogleDistanceMatrix(matrixGPSPoints);
