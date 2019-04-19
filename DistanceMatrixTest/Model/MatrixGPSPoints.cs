@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace DistanceMatrixTest.Model
@@ -18,8 +19,8 @@ namespace DistanceMatrixTest.Model
         private DistDurText[,] _distDurTextMatrix;
         private DistDurValue[,] _distDurValueMatrix;
 
-        public static string DataPath = @"D:\projects\dotNet\DistanceMatrixGPS\DistanceMatrixTest\Data\";
-        public static string OutputPath = @"D:\output\";
+        public static string DataPath = System.Configuration.ConfigurationManager.AppSettings.Get("DataPath");//@"D:\projects\dotNet\DistanceMatrixGPS\DistanceMatrixTest\Data\";
+        public static string OutputPath = System.Configuration.ConfigurationManager.AppSettings.Get("OutputPath");//@"D:\output\";
 
         public int QuantityOfOriginsAndDestinations { get => _quantityOfOriginsAndDestinations; set => _quantityOfOriginsAndDestinations = value; }
 
@@ -60,8 +61,8 @@ namespace DistanceMatrixTest.Model
             {
                 try
                 {
-                    this.Latitude = Convert.ToDouble(latitude);
-                    this.Longitude = Convert.ToDouble(longitude);
+                    this.Latitude = Convert.ToDouble(latitude, CultureInfo.InvariantCulture);
+                    this.Longitude = Convert.ToDouble(longitude, CultureInfo.InvariantCulture);
                 }
                 catch (Exception e)
                 {

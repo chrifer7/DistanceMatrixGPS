@@ -10,9 +10,9 @@ namespace DistanceMatrixTest
 {   
     class Program
     {
-        public static bool CalculatesGoogle = false;
+        public static bool CalculatesGoogle = true;
         public static bool CalculatesBing = true;
-        public static int N = 10;
+        public static int N = 20;
 
         static void Main(string[] args)
         {
